@@ -11,7 +11,7 @@ namespace LeitorNFe.Domain.Domain
         public string CNPJ { get; set; }
         public string Email { get; set; }
         public Address Address { get; set; }
-        public int AddressID { get; set; }
+        public string AddressID { get; set; }
         public int infNFeID { get; set; }
     }
 }

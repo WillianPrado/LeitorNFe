@@ -36,12 +36,13 @@ namespace LeitorNFe.Web.Controllers
                     using (var reader = new StreamReader(memoryStream))
                     {
                         string xmlContent = await reader.ReadToEndAsync();
-                        Product product = new Product();
-                        var products = product.ParseXml(xmlContent);
+                        var infNFe = new InfNFe(xmlContent);
+                        infNFe.ParseEmitente()
+                            .ParseProd();
                         // Aqui está o conteúdo do arquivo XML em forma de string (xmlContent)
                         // Você pode processar ou manipular essa string conforme necessário
 
-                        return Ok(products);
+                        return Ok(infNFe);
                     }
                 }
             }

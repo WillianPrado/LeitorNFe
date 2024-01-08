@@ -32,7 +32,7 @@ namespace LeitorNFe.Domain.Domain
         /// Chave estrangeira da nota fiscal
         /// </summary>
         public int infNFeID { get; set; }
-        public List<Product> ParseXml(string xmlContent)
+        public List<Product> ParseProd(string xmlContent)
         {
             try
             {
@@ -66,7 +66,6 @@ namespace LeitorNFe.Domain.Domain
                         vUnTrib = Convert.ToDecimal(det.Element(ns + "vUnTrib")?.Value),
                         vDesc = Convert.ToDecimal(det.Element(ns + "vDesc")?.Value),
                         indTot = Convert.ToInt32(det.Element(ns + "indTot")?.Value),
-                        Cavalo = det.Element(ns + "Cavalo")?.Value,
                     };
                 }).ToList();
 
