@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LeitorNFe.Domain.Domain
 {
-    public class Dest
+    public class Destinatario
     {
         public int ID { get; set; } // Chave Primária
         public string xNome { get; set; }

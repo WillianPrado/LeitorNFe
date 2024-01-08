@@ -9,55 +9,54 @@ namespace LeitorNFe.Domain.Domain
 {
     public class InfNFe
     {
-        public int ID { get; set; }
+        public string ID { get; set; }
         public string nNF { get; set; }
         public string chNFe { get; set; }
         public string dhEmi { get; set; }
-        public long vNF { get; set; }
         public Emitent Emitent { get; set; }
-        public Dest Dest { get; set; }
+        public Destinatario Dest { get; set; }
         public ICMSTot ICMSTot { get; set; }
+        public InfProt InfProt { get; set; }
         public List<Product> Products { get; set; }
-        private string XMLContent { get; set; }
+        private XNamespace infNFe { get; set; }
+        private XDocument XMLDoc { get; set; }
 
         public InfNFe(string XMLContent)
         {
-            this.XMLContent = XMLContent;
+            XMLDoc = XDocument.Parse(XMLContent);
+
+            infNFe = "http://www.portalfiscal.inf.br/nfe";
+            ID = XMLDoc.Descendants(infNFe + "infNFe").FirstOrDefault()?.Attribute("Id")?.Value;
         }
         public InfNFe ParseProd()
         {
             try
             {
+                var prodElements = XMLDoc.Descendants(infNFe + "prod").ToList();
 
-                XDocument xmlDoc = XDocument.Parse(XMLContent);
-
-                XNamespace ns = "http://www.portalfiscal.inf.br/nfe";
-
-                var detElements = xmlDoc.Descendants(ns + "prod").ToList();
-
-                if (detElements == null || detElements.Count == 0)
+                if (prodElements == null || prodElements.Count == 0)
                     Products = new List<Product>();
 
-                Products = detElements.Select(det =>
+                Products = prodElements.Select(prod =>
                 {
                     return new Product
                     {
-                        cProd = det.Element(ns + "cProd")?.Value,
-                        cEAN = det.Element(ns + "cEAN")?.Value,
-                        xProd = det.Element(ns + "xProd")?.Value,
-                        NCM = det.Element(ns + "NCM")?.Value,
-                        CEST = det.Element(ns + "CEST")?.Value,
-                        CFOP = det.Element(ns + "CFOP")?.Value,
-                        uCom = det.Element(ns + "uCom")?.Value,
-                        qCom = Convert.ToDecimal(det.Element(ns + "qCom")?.Value),
-                        vUnCom = Convert.ToDecimal(det.Element(ns + "vUnCom")?.Value),
-                        vProd = Convert.ToDecimal(det.Element(ns + "vProd")?.Value),
-                        cEANTrib = det.Element(ns + "cEANTrib")?.Value,
-                        uTrib = det.Element(ns + "uTrib")?.Value,
-                        qTrib = Convert.ToDecimal(det.Element(ns + "qTrib")?.Value),
-                        vUnTrib = Convert.ToDecimal(det.Element(ns + "vUnTrib")?.Value),
-                        vDesc = Convert.ToDecimal(det.Element(ns + "vDesc")?.Value),
-                        indTot = Convert.ToInt32(det.Element(ns + "indTot")?.Value),
+                        cProd = prod.Element(infNFe + "cProd")?.Value,
+                        cEAN = prod.Element(infNFe + "cEAN")?.Value,
+                        xProd = prod.Element(infNFe + "xProd")?.Value,
+                        NCM = prod.Element(infNFe + "NCM")?.Value,
+                        CEST = prod.Element(infNFe + "CEST")?.Value,
+                        CFOP = prod.Element(infNFe + "CFOP")?.Value,
+                        uCom = prod.Element(infNFe + "uCom")?.Value,
+                        qCom = Convert.ToDecimal(prod.Element(infNFe + "qCom")?.Value),
+                        vUnCom = Convert.ToDecimal(prod.Element(infNFe + "vUnCom")?.Value),
+                        vProd = Convert.ToDecimal(prod.Element(infNFe + "vProd")?.Value),
+                        cEANTrib = prod.Element(infNFe + "cEANTrib")?.Value,
+                        uTrib = prod.Element(infNFe + "uTrib")?.Value,
+                        qTrib = Convert.ToDecimal(prod.Element(infNFe + "qTrib")?.Value),
+                        vUnTrib = Convert.ToDecimal(prod.Element(infNFe + "vUnTrib")?.Value),
+                        vDesc = Convert.ToDecimal(prod.Element(infNFe + "vDesc")?.Value),
+                        indTot = Convert.ToInt32(prod.Element(infNFe + "indTot")?.Value),
                     };
                 }).ToList();
                 return this;
@@ -72,31 +71,28 @@ namespace LeitorNFe.Domain.Domain
         {
             try
             {
-                XDocument xmlDoc = XDocument.Parse(XMLContent);
-                XNamespace ns = "http://www.portalfiscal.inf.br/nfe";
-
-                var emitElement = xmlDoc.Descendants(ns + "emit").FirstOrDefault();
+                var emitElement = XMLDoc.Descendants(infNFe + "emit").FirstOrDefault();
 
                 if (emitElement == null)
                     return this;
 
                 Emitent = new Emitent()
                 {
-                    CNPJ = emitElement.Element(ns + "CNPJ")?.Value,
-                    xNome = emitElement.Element(ns + "xNome")?.Value,
-                    xFant = emitElement.Element(ns + "xFant")?.Value,
+                    CNPJ = emitElement.Element(infNFe + "CNPJ")?.Value,
+                    xNome = emitElement.Element(infNFe + "xNome")?.Value,
+                    xFant = emitElement.Element(infNFe + "xFant")?.Value,
                     EmitentAddress = new Address()
                     {
-                        xLgr = emitElement.Element(ns + "enderEmit")?.Element(ns + "xLgr")?.Value,
-                        nro = emitElement.Element(ns + "enderEmit")?.Element(ns + "nro")?.Value,
-                        xBairro = emitElement.Element(ns + "enderEmit")?.Element(ns + "xBairro")?.Value,
-                        cMun = emitElement.Element(ns + "enderEmit")?.Element(ns + "cMun")?.Value,
-                        xMun = emitElement.Element(ns + "enderEmit")?.Element(ns + "xMun")?.Value,
-                        UF = emitElement.Element(ns + "enderEmit")?.Element(ns + "UF")?.Value,
-                        CEP = emitElement.Element(ns + "enderEmit")?.Element(ns + "CEP")?.Value,
-                        cPais = emitElement.Element(ns + "enderEmit")?.Element(ns + "cPais")?.Value,
-                        xPais = emitElement.Element(ns + "enderEmit")?.Element(ns + "xPais")?.Value,
-                        fone = emitElement.Element(ns + "enderEmit")?.Element(ns + "fone")?.Value
+                        xLgr = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "xLgr")?.Value,
+                        nro = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "nro")?.Value,
+                        xBairro = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "xBairro")?.Value,
+                        cMun = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "cMun")?.Value,
+                        xMun = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "xMun")?.Value,
+                        UF = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "UF")?.Value,
+                        CEP = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "CEP")?.Value,
+                        cPais = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "cPais")?.Value,
+                        xPais = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "xPais")?.Value,
+                        fone = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "fone")?.Value
                     }
                 };
 
@@ -112,32 +108,29 @@ namespace LeitorNFe.Domain.Domain
         {
             try
             {
-                XDocument xmlDoc = XDocument.Parse(XMLContent);
-                XNamespace ns = "http://www.portalfiscal.inf.br/nfe";
-
-                var destElement = xmlDoc.Descendants(ns + "dest").FirstOrDefault();
+                var destElement = XMLDoc.Descendants(infNFe + "dest").FirstOrDefault();
 
                 if (destElement == null)
-                    return null;
+                    return this;
 
-                Dest = new Dest
+                Dest = new Destinatario
                 {
-                    CPF = destElement.Element(ns + "CPF")?.Value,
-                    xNome = destElement.Element(ns + "xNome")?.Value,
-                    IE = destElement.Element(ns + "IE")?.Value,
-                    email = destElement.Element(ns + "email")?.Value,
+                    CPF = destElement.Element(infNFe + "CPF")?.Value,
+                    xNome = destElement.Element(infNFe + "xNome")?.Value,
+                    IE = destElement.Element(infNFe + "IE")?.Value,
+                    email = destElement.Element(infNFe + "email")?.Value,
                     DestAddress = new Address
                     {
-                        xLgr = destElement.Element(ns + "enderDest")?.Element(ns + "xLgr")?.Value,
-                        nro = destElement.Element(ns + "enderDest")?.Element(ns + "nro")?.Value,
-                        xBairro = destElement.Element(ns + "enderDest")?.Element(ns + "xBairro")?.Value,
-                        cMun = destElement.Element(ns + "enderDest")?.Element(ns + "cMun")?.Value,
-                        xMun = destElement.Element(ns + "enderDest")?.Element(ns + "xMun")?.Value,
-                        UF = destElement.Element(ns + "enderDest")?.Element(ns + "UF")?.Value,
-                        CEP = destElement.Element(ns + "enderDest")?.Element(ns + "CEP")?.Value,
-                        cPais = destElement.Element(ns + "enderDest")?.Element(ns + "cPais")?.Value,
-                        xPais = destElement.Element(ns + "enderDest")?.Element(ns + "xPais")?.Value,
-                        fone = destElement.Element(ns + "enderDest")?.Element(ns + "fone")?.Value
+                        xLgr = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "xLgr")?.Value,
+                        nro = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "nro")?.Value,
+                        xBairro = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "xBairro")?.Value,
+                        cMun = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "cMun")?.Value,
+                        xMun = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "xMun")?.Value,
+                        UF = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "UF")?.Value,
+                        CEP = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "CEP")?.Value,
+                        cPais = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "cPais")?.Value,
+                        xPais = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "xPais")?.Value,
+                        fone = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "fone")?.Value
                     }
                 };
 
@@ -146,6 +139,50 @@ namespace LeitorNFe.Domain.Domain
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+        
+        public InfNFe ParseInfProt()
+        {
+            try
+            {
+                XNamespace ns = "http://www.portalfiscal.inf.br/nfe";
+                var infProtElement = XMLDoc.Descendants(ns + "infProt").FirstOrDefault();
+
+                if (infProtElement != null)
+                {
+                    InfProt = new InfProt
+                    {
+                        chNFe = (string)infProtElement.Element(ns + "chNFe")
+                    };
+                }
+                return this;
+            }
+            catch (Exception ex)
+            {
+                return this;
+            }
+        }
+
+        public InfNFe ParseICMSTot()
+        {
+            try
+            {
+                XNamespace ns = "http://www.portalfiscal.inf.br/nfe";
+                var ICMSTotElement = XMLDoc.Descendants(ns + "ICMSTot").FirstOrDefault();
+
+                if (ICMSTotElement != null)
+                {
+                    ICMSTot = new ICMSTot
+                    {
+                        vNF = Convert.ToDecimal(ICMSTotElement.Element(ns + "vNF")?.Value ?? "0"),
+                    };
+                }
+                return this;
+            }
+            catch (Exception ex)
+            {
+                return this;
             }
         }
     }

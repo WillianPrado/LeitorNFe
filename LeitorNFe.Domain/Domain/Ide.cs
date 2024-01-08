@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace LeitorNFe.Domain.Domain
 {
-    public class ICMSTot
+    public class Ide
     {
-        public int ID { get; set; }
-        public int infNFeID { get; set; }
-        public decimal vNF {  get; set; }
     }
 }

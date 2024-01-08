@@ -16,6 +16,6 @@ namespace LeitorNFe.Infra.Context
         public DbSet<Address> addresses { get; set; }
         public DbSet<Emitent> Emitents { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Dest> Recipients { get; set; }
+        public DbSet<Destinatario> Recipients { get; set; }
     }
 }
