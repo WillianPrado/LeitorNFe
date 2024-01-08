@@ -4,13 +4,14 @@ using System.Text;
 
 namespace LeitorNFe.Domain.Domain
 {
-    public class Recipient
+    public class Dest
     {
         public int ID { get; set; } // Chave Primária
-        public string Name { get; set; }
-        public string CNPJ { get; set; }
-        public string Email { get; set; }
-        public Address Address { get; set; }
+        public string xNome { get; set; }
+        public string CPF { get; set; }
+        public string IE { get; set; }
+        public string email { get; set; }
+        public Address DestAddress { get; set; }
         public string AddressID { get; set; }
         public int infNFeID { get; set; }
     }

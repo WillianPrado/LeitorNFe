@@ -15,7 +15,7 @@ namespace LeitorNFe.Domain.Domain
         public string dhEmi { get; set; }
         public long vNF { get; set; }
         public Emitent Emitent { get; set; }
-        public Recipient Recipient { get; set; }
+        public Dest Dest { get; set; }
         public ICMSTot ICMSTot { get; set; }
         public List<Product> Products { get; set; }
         private string XMLContent { get; set; }
@@ -97,6 +97,47 @@ namespace LeitorNFe.Domain.Domain
                         cPais = emitElement.Element(ns + "enderEmit")?.Element(ns + "cPais")?.Value,
                         xPais = emitElement.Element(ns + "enderEmit")?.Element(ns + "xPais")?.Value,
                         fone = emitElement.Element(ns + "enderEmit")?.Element(ns + "fone")?.Value
+                    }
+                };
+
+                return this;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public InfNFe ParseDest()
+        {
+            try
+            {
+                XDocument xmlDoc = XDocument.Parse(XMLContent);
+                XNamespace ns = "http://www.portalfiscal.inf.br/nfe";
+
+                var destElement = xmlDoc.Descendants(ns + "dest").FirstOrDefault();
+
+                if (destElement == null)
+                    return null;
+
+                Dest = new Dest
+                {
+                    CPF = destElement.Element(ns + "CPF")?.Value,
+                    xNome = destElement.Element(ns + "xNome")?.Value,
+                    IE = destElement.Element(ns + "IE")?.Value,
+                    email = destElement.Element(ns + "email")?.Value,
+                    DestAddress = new Address
+                    {
+                        xLgr = destElement.Element(ns + "enderDest")?.Element(ns + "xLgr")?.Value,
+                        nro = destElement.Element(ns + "enderDest")?.Element(ns + "nro")?.Value,
+                        xBairro = destElement.Element(ns + "enderDest")?.Element(ns + "xBairro")?.Value,
+                        cMun = destElement.Element(ns + "enderDest")?.Element(ns + "cMun")?.Value,
+                        xMun = destElement.Element(ns + "enderDest")?.Element(ns + "xMun")?.Value,
+                        UF = destElement.Element(ns + "enderDest")?.Element(ns + "UF")?.Value,
+                        CEP = destElement.Element(ns + "enderDest")?.Element(ns + "CEP")?.Value,
+                        cPais = destElement.Element(ns + "enderDest")?.Element(ns + "cPais")?.Value,
+                        xPais = destElement.Element(ns + "enderDest")?.Element(ns + "xPais")?.Value,
+                        fone = destElement.Element(ns + "enderDest")?.Element(ns + "fone")?.Value
                     }
                 };
 

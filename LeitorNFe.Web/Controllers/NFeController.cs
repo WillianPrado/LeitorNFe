@@ -38,6 +38,7 @@ namespace LeitorNFe.Web.Controllers
                         string xmlContent = await reader.ReadToEndAsync();
                         var infNFe = new InfNFe(xmlContent);
                         infNFe.ParseEmitente()
+                            .ParseDest()
                             .ParseProd();
                         // Aqui está o conteúdo do arquivo XML em forma de string (xmlContent)
                         // Você pode processar ou manipular essa string conforme necessário
