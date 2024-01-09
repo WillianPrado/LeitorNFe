@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LeitorNFe.Domain.Domain
 {
-    public class Emitent
+    public class Emit
     {
         // Propriedades da tabela Emitents
         [Key]

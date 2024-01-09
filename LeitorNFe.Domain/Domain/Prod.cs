@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace LeitorNFe.Domain.Domain
 {
-    public class Product
+    public class Prod
     {
         public int ID { get; set; } // Chave Primária
         public string cProd { get; set; } 
@@ -32,7 +32,7 @@ namespace LeitorNFe.Domain.Domain
         /// Chave estrangeira da nota fiscal
         /// </summary>
         public string infNFeID { get; set; }
-        public List<Product> ParseProd(string xmlContent)
+        public List<Prod> ParseProd(string xmlContent)
         {
             try
             {
@@ -44,11 +44,11 @@ namespace LeitorNFe.Domain.Domain
                 var detElements = xmlDoc.Descendants(ns + "prod").ToList();
 
                 if( detElements == null || detElements.Count == 0 )
-                    return new List<Product>();
+                    return new List<Prod>();
 
-                List<Product> products = detElements.Select(det =>
+                List<Prod> products = detElements.Select(det =>
                 {
-                    return new Product
+                    return new Prod
                     {
                         cProd = det.Element(ns + "cProd")?.Value,
                         cEAN = det.Element(ns + "cEAN")?.Value,

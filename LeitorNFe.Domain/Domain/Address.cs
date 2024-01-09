@@ -6,7 +6,7 @@ namespace LeitorNFe.Domain.Domain
 {
     public class Address
     {
-        public int ID { get; set; } // Chave Primária
+        public string ID { get; set; } // Chave Primária
         public string xLgr { get; set; }
         public string nro { get; set; }
         public string xCpl { get; set; }
@@ -18,5 +18,13 @@ namespace LeitorNFe.Domain.Domain
         public string cPais { get; set; }
         public string xPais { get; set; }
         public string fone { get; set; }
+
+        public string GeneranteID()
+        {
+            ID = $"{xLgr}_{nro}_{xBairro}_{xMun}_{UF}_{CEP}";
+            return ID ;
+        }
+
+        
     }
 }

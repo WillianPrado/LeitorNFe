@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,23 +11,40 @@ namespace LeitorNFe.Domain.Domain
     public class InfNFe
     {
         public string ID { get; set; }
-        public string nNF { get; set; }
-        public string chNFe { get; set; }
-        public string dhEmi { get; set; }
-        public Emitent Emitent { get; set; }
-        public Destinatario Dest { get; set; }
+        public Emit Emit { get; set; }
+        public Dest Dest { get; set; }
         public ICMSTot ICMSTot { get; set; }
         public InfProt InfProt { get; set; }
-        public List<Product> Products { get; set; }
+        public List<Prod> Products { get; set; }
         private XNamespace infNFe { get; set; }
         private XDocument XMLDoc { get; set; }
 
-        public InfNFe(string XMLContent)
+        /// <summary>
+        /// Retorna uma InfNFe com os dados extraidos de um arquivo XML
+        /// </summary>
+        /// <param name="memoryStream"></param>
+        public InfNFe(MemoryStream memoryStream)
         {
-            XMLDoc = XDocument.Parse(XMLContent);
+            try
+            {
+                using (var reader = new StreamReader(memoryStream))
+                {
+                    string xmlContent = reader.ReadToEndAsync().Result;
+                    XMLDoc = XDocument.Parse(xmlContent);
 
-            infNFe = "http://www.portalfiscal.inf.br/nfe";
-            ID = XMLDoc.Descendants(infNFe + "infNFe").FirstOrDefault()?.Attribute("Id")?.Value;
+                    infNFe = "http://www.portalfiscal.inf.br/nfe";
+                    ID = XMLDoc.Descendants(infNFe + "infNFe").FirstOrDefault()?.Attribute("Id")?.Value;
+                         ParseEmitente()
+                        .ParseDest()
+                        .ParseProd()
+                        .ParseInfProt()
+                        .ParseICMSTot();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao cria infNFe");
+            }
         }
         public InfNFe ParseProd()
         {
@@ -35,11 +53,11 @@ namespace LeitorNFe.Domain.Domain
                 var prodElements = XMLDoc.Descendants(infNFe + "prod").ToList();
 
                 if (prodElements == null || prodElements.Count == 0)
-                    Products = new List<Product>();
+                    Products = new List<Prod>();
 
                 Products = prodElements.Select(prod =>
                 {
-                    return new Product
+                    return new Prod
                     {
                         cProd = prod.Element(infNFe + "cProd")?.Value,
                         cEAN = prod.Element(infNFe + "cEAN")?.Value,
@@ -76,7 +94,7 @@ namespace LeitorNFe.Domain.Domain
                 if (emitElement == null)
                     return this;
 
-                Emitent = new Emitent()
+                Emit = new Emit()
                 {
                     CNPJ = emitElement.Element(infNFe + "CNPJ")?.Value,
                     xNome = emitElement.Element(infNFe + "xNome")?.Value,
@@ -95,7 +113,7 @@ namespace LeitorNFe.Domain.Domain
                         fone = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "fone")?.Value
                     }
                 };
-
+                Emit.EmitentAddress.GeneranteID();
                 return this;
             }
             catch (Exception ex)
@@ -113,7 +131,7 @@ namespace LeitorNFe.Domain.Domain
                 if (destElement == null)
                     return this;
 
-                Dest = new Destinatario
+                Dest = new Dest
                 {
                     CPF = destElement.Element(infNFe + "CPF")?.Value,
                     xNome = destElement.Element(infNFe + "xNome")?.Value,
@@ -133,7 +151,7 @@ namespace LeitorNFe.Domain.Domain
                         fone = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "fone")?.Value
                     }
                 };
-
+                Dest.DestAddress.GeneranteID();
                 return this;
             }
             catch (Exception ex)

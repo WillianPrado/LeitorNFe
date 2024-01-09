@@ -32,21 +32,8 @@ namespace LeitorNFe.Web.Controllers
                 {
                     await file.CopyToAsync(memoryStream);
                     memoryStream.Seek(0, SeekOrigin.Begin);
-
-                    using (var reader = new StreamReader(memoryStream))
-                    {
-                        string xmlContent = await reader.ReadToEndAsync();
-                        var infNFe = new InfNFe(xmlContent);
-                        infNFe.ParseEmitente()
-                            .ParseDest()
-                            .ParseProd()
-                            .ParseInfProt()
-                            .ParseICMSTot();
-                        // Aqui está o conteúdo do arquivo XML em forma de string (xmlContent)
-                        // Você pode processar ou manipular essa string conforme necessário
-
-                        return Ok(infNFe);
-                    }
+                    var infNFe = new InfNFe(memoryStream);
+                    return Ok(infNFe);
                 }
             }
             catch (Exception ex)

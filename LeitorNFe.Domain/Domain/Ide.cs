@@ -8,5 +8,10 @@ namespace LeitorNFe.Domain.Domain
 {
     public class Ide
     {
+        public int ID { get; set; }
+        public long nNF { get; set; }
+        public DateTime dhEmi { get; set; }
+        public DateTime dhSaiEnt { get; set; }
+        public string InfNFe { get; set; }
     }
 }
