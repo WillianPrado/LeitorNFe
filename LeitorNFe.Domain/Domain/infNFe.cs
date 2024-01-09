@@ -10,6 +10,7 @@ namespace LeitorNFe.Domain.Domain
 {
     public class InfNFe
     {
+        public InfNFe() { }
         public string ID { get; set; }
         public Emit Emit { get; set; }
         public Dest Dest { get; set; }
@@ -67,7 +68,8 @@ namespace LeitorNFe.Domain.Domain
                         CFOP = prod.Element(infNFe + "CFOP")?.Value,
                         uCom = prod.Element(infNFe + "uCom")?.Value,
                         qCom = Convert.ToDecimal(prod.Element(infNFe + "qCom")?.Value),
-                        vUnCom = Convert.ToDecimal(prod.Element(infNFe + "vUnCom")?.Value),
+                        vUnCom = decimal.TryParse(prod.Element(infNFe + "vUnCom").Value?
+                            .Replace(".", ","), out var parsedVUnCom) ? parsedVUnCom : 0,
                         vProd = Convert.ToDecimal(prod.Element(infNFe + "vProd")?.Value),
                         cEANTrib = prod.Element(infNFe + "cEANTrib")?.Value,
                         uTrib = prod.Element(infNFe + "uTrib")?.Value,
@@ -193,7 +195,7 @@ namespace LeitorNFe.Domain.Domain
                 {
                     ICMSTot = new ICMSTot
                     {
-                        vNF = Convert.ToDecimal(ICMSTotElement.Element(ns + "vNF")?.Value ?? "0"),
+                        vNF = decimal.TryParse(ICMSTotElement.Element(infNFe + "vNF").Value?.Replace(".", ","), out var parsedVUnCom) ? parsedVUnCom : 0,
                     };
                 }
                 return this;
