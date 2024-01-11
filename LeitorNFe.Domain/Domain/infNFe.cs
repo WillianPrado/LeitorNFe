@@ -40,6 +40,7 @@ namespace LeitorNFe.Domain.Domain
                     infNFe = "http://www.portalfiscal.inf.br/nfe";
                     ID = XMLDoc.Descendants(infNFe + "infNFe").FirstOrDefault()?.Attribute("Id")?.Value;
                          ParseEmitente()
+                        .ParseIde()
                         .ParseDest()
                         .ParseProd()
                         .ParseInfProt()
@@ -56,7 +57,7 @@ namespace LeitorNFe.Domain.Domain
         {
             try
             {
-                var ideElements = XMLDoc.Descendants(infNFe + "prod").FirstOrDefault();
+                var ideElements = XMLDoc.Descendants(infNFe + "ide").FirstOrDefault();
 
                 if (ideElements == null)
                 {
@@ -66,7 +67,7 @@ namespace LeitorNFe.Domain.Domain
                     
                 Ide = new Ide
                 {
-                    nNF = long.TryParse(ideElements.Element(infNFe + "vUnCom").Value?
+                    nNF = long.TryParse(ideElements.Element(infNFe + "nNF").Value?
                             .Replace(".", ","), out var parsednNF) ? parsednNF : 0,
                     dhEmi = DateTime.TryParseExact(ideElements.Element(infNFe + "dhEmi")?.Value, 
                             "yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseddhEmi) ? parseddhEmi : DateTime.MinValue,

@@ -1,8 +1,13 @@
 using LeitorNFe.Data;
+using LeitorNFe.Domain.Interfaces;
+using LeitorNFe.Infra.Context;
+using LeitorNFe.Infra.Repository;
+using LeitorNFe.Infra.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +34,13 @@ namespace LeitorNFe
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
+            services.AddControllers(); // Adiciona suporte a controllers API
+            services.AddCors();
+            services.AddControllersWithViews();
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<LeitorNFeContext>(options =>
+                    options.UseSqlServer(connectionString));
+            services.AddScoped<IInfNFeRepository, InfNFeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +56,7 @@ namespace LeitorNFe
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            DatabaseManagementService.MigrationInitialisation(app);
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

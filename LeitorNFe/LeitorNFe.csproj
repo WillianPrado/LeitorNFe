@@ -4,4 +4,9 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LeitorNFe.Domain\LeitorNFe.Domain.csproj" />
+    <ProjectReference Include="..\LeitorNFe.infra\LeitorNFe.Infra.csproj" />
+  </ItemGroup>
+
 </Project>
