@@ -120,5 +120,25 @@ namespace LeitorNFe.Infra.Repository
                 throw new Exception("Erro ao caputurar InfNFe pelo ID");
             }
         }
+
+        public (List<InfNFe> InfNFeList, int TotalCount) GetList(int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                var totalCount = _leitorNFeContext.InfNFe.Count();
+
+                var infNFeList = _leitorNFeContext.InfNFe
+                    .OrderBy(x => x.ID)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                return (infNFeList, totalCount);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao capturar lista paginada de InfNFe");
+            }
+        }
     }
 }

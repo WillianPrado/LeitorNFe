@@ -1,0 +1,55 @@
+﻿@page "/NFe_list"
+@using LeitorNFe.Domain.Interfaces
+@using Microsoft.AspNetCore.Http
+@using LeitorNFe.Data
+@using LeitorNFe.Domain.Domain
+@using System.IO
+
+@inject IInfNFeRepository _iInfNFeRepository;
+
+<h1>Lista de NFe's</h1>
+<div class="table-responsive mt-3">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID NFe</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var produto in InfNFeList)
+            {
+                <tr>
+                    <td>@produto.ID</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<Pager CurrentPage="page" PageSize="pageSize" TotalCount="totalCount" PageChanged="HandlePageChange" />
+
+@code {
+    private IBrowserFile file;
+    private List<InfNFe> InfNFeList;
+    private int page = 1;
+    private int pageSize = 10;
+    private int totalCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var response = _iInfNFeRepository.GetList(page, pageSize);
+        InfNFeList = response.InfNFeList;
+        totalCount = response.TotalCount;
+    }
+
+    private async Task HandlePageChange(int newPage)
+    {
+        page = newPage;
+        await LoadData();
+    }
+}
