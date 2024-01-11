@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,9 @@ namespace LeitorNFe.Domain.Domain
     {
         public InfNFe() { }
         public string ID { get; set; }
+        public string EmitID { get; set; }
+        public string DestID { get; set; }
+        public Ide Ide { get; set; }
         public Emit Emit { get; set; }
         public Dest Dest { get; set; }
         public ICMSTot ICMSTot { get; set; }
@@ -47,6 +51,34 @@ namespace LeitorNFe.Domain.Domain
                 throw new Exception("Erro ao cria infNFe");
             }
         }
+
+        public InfNFe ParseIde()
+        {
+            try
+            {
+                var ideElements = XMLDoc.Descendants(infNFe + "prod").FirstOrDefault();
+
+                if (ideElements == null)
+                {
+                    Ide = new Ide();
+                    return this;
+                }
+                    
+                Ide = new Ide
+                {
+                    nNF = long.TryParse(ideElements.Element(infNFe + "vUnCom").Value?
+                            .Replace(".", ","), out var parsednNF) ? parsednNF : 0,
+                    dhEmi = DateTime.TryParseExact(ideElements.Element(infNFe + "dhEmi")?.Value, 
+                            "yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseddhEmi) ? parseddhEmi : DateTime.MinValue,
+                    dhSaiEnt = DateTime.TryParseExact(ideElements.Element(infNFe + "dhEmi")?.Value,
+                            "yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseddhSaiEnt) ? parseddhEmi : DateTime.MinValue
+                };
+            }
+            catch (Exception ex) 
+            {
+            }
+            return this;
+        }
         public InfNFe ParseProd()
         {
             try
@@ -54,7 +86,11 @@ namespace LeitorNFe.Domain.Domain
                 var prodElements = XMLDoc.Descendants(infNFe + "prod").ToList();
 
                 if (prodElements == null || prodElements.Count == 0)
+                {
                     Products = new List<Prod>();
+                    return this;
+                }
+                    
 
                 Products = prodElements.Select(prod =>
                 {
@@ -74,7 +110,8 @@ namespace LeitorNFe.Domain.Domain
                         cEANTrib = prod.Element(infNFe + "cEANTrib")?.Value,
                         uTrib = prod.Element(infNFe + "uTrib")?.Value,
                         qTrib = Convert.ToDecimal(prod.Element(infNFe + "qTrib")?.Value),
-                        vUnTrib = Convert.ToDecimal(prod.Element(infNFe + "vUnTrib")?.Value),
+                        vUnTrib = decimal.TryParse(prod.Element(infNFe + "vUnTrib").Value?
+                            .Replace(".", ","), out var parsedVvUnTrib) ? parsedVUnCom : 0,
                         vDesc = Convert.ToDecimal(prod.Element(infNFe + "vDesc")?.Value),
                         indTot = Convert.ToInt32(prod.Element(infNFe + "indTot")?.Value),
                     };
@@ -115,7 +152,7 @@ namespace LeitorNFe.Domain.Domain
                         fone = emitElement.Element(infNFe + "enderEmit")?.Element(infNFe + "fone")?.Value
                     }
                 };
-                Emit.EmitentAddress.GeneranteID();
+                Emit.AddressID = Emit.EmitentAddress.GeneranteID();
                 return this;
             }
             catch (Exception ex)
@@ -153,7 +190,7 @@ namespace LeitorNFe.Domain.Domain
                         fone = destElement.Element(infNFe + "enderDest")?.Element(infNFe + "fone")?.Value
                     }
                 };
-                Dest.DestAddress.GeneranteID();
+                Dest.AddressID =  Dest.DestAddress.GeneranteID();
                 return this;
             }
             catch (Exception ex)

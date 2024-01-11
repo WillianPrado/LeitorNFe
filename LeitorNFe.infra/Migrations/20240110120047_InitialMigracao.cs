@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace LeitorNFe.infra.Migrations
+namespace LeitorNFe.Infra.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigracao : Migration
@@ -50,17 +50,6 @@ namespace LeitorNFe.infra.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InfNFe",
-                columns: table => new
-                {
-                    ID = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InfNFe", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Dests",
                 columns: table => new
                 {
@@ -68,17 +57,11 @@ namespace LeitorNFe.infra.Migrations
                     xNome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IE = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AddressID = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    infNFeID = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    AddressID = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Dests", x => x.CPF);
-                    table.ForeignKey(
-                        name: "FK_Dests_InfNFe_infNFeID",
-                        column: x => x.infNFeID,
-                        principalTable: "InfNFe",
-                        principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_Dests_addresses_AddressID",
                         column: x => x.AddressID,
@@ -94,22 +77,39 @@ namespace LeitorNFe.infra.Migrations
                     xNome = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     xFant = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    infNFeID = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     AddressID = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Emits", x => x.CNPJ);
                     table.ForeignKey(
-                        name: "FK_Emits_InfNFe_infNFeID",
-                        column: x => x.infNFeID,
-                        principalTable: "InfNFe",
-                        principalColumn: "ID");
-                    table.ForeignKey(
                         name: "FK_Emits_addresses_AddressID",
                         column: x => x.AddressID,
                         principalTable: "addresses",
                         principalColumn: "ID");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InfNFe",
+                columns: table => new
+                {
+                    ID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    EmitID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DestID = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InfNFe", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_InfNFe_Dests_DestID",
+                        column: x => x.DestID,
+                        principalTable: "Dests",
+                        principalColumn: "CPF");
+                    table.ForeignKey(
+                        name: "FK_InfNFe_Emits_EmitID",
+                        column: x => x.EmitID,
+                        principalTable: "Emits",
+                        principalColumn: "CNPJ");
                 });
 
             migrationBuilder.CreateTable(
@@ -190,23 +190,9 @@ namespace LeitorNFe.infra.Migrations
                 column: "AddressID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dests_infNFeID",
-                table: "Dests",
-                column: "infNFeID",
-                unique: true,
-                filter: "[infNFeID] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Emits_AddressID",
                 table: "Emits",
                 column: "AddressID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Emits_infNFeID",
-                table: "Emits",
-                column: "infNFeID",
-                unique: true,
-                filter: "[infNFeID] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_iCMSTots_infNFeID",
@@ -214,6 +200,16 @@ namespace LeitorNFe.infra.Migrations
                 column: "infNFeID",
                 unique: true,
                 filter: "[infNFeID] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InfNFe_DestID",
+                table: "InfNFe",
+                column: "DestID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InfNFe_EmitID",
+                table: "InfNFe",
+                column: "EmitID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InfProt_infNFeID",
@@ -232,12 +228,6 @@ namespace LeitorNFe.infra.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Dests");
-
-            migrationBuilder.DropTable(
-                name: "Emits");
-
-            migrationBuilder.DropTable(
                 name: "iCMSTots");
 
             migrationBuilder.DropTable(
@@ -250,10 +240,16 @@ namespace LeitorNFe.infra.Migrations
                 name: "Prods");
 
             migrationBuilder.DropTable(
-                name: "addresses");
+                name: "InfNFe");
 
             migrationBuilder.DropTable(
-                name: "InfNFe");
+                name: "Dests");
+
+            migrationBuilder.DropTable(
+                name: "Emits");
+
+            migrationBuilder.DropTable(
+                name: "addresses");
         }
     }
 }

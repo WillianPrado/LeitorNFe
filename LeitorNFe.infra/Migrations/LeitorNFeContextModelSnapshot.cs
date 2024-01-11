@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LeitorNFe.infra.Migrations
+namespace LeitorNFe.Infra.Migrations
 {
     [DbContext(typeof(LeitorNFeContext))]
     partial class LeitorNFeContextModelSnapshot : ModelSnapshot
@@ -79,19 +79,12 @@ namespace LeitorNFe.infra.Migrations
                     b.Property<string>("email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("infNFeID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("xNome")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CPF");
 
                     b.HasIndex("AddressID");
-
-                    b.HasIndex("infNFeID")
-                        .IsUnique()
-                        .HasFilter("[infNFeID] IS NOT NULL");
 
                     b.ToTable("Dests");
                 });
@@ -107,9 +100,6 @@ namespace LeitorNFe.infra.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("infNFeID")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("xFant")
                         .HasColumnType("nvarchar(max)");
 
@@ -119,10 +109,6 @@ namespace LeitorNFe.infra.Migrations
                     b.HasKey("CNPJ");
 
                     b.HasIndex("AddressID");
-
-                    b.HasIndex("infNFeID")
-                        .IsUnique()
-                        .HasFilter("[infNFeID] IS NOT NULL");
 
                     b.ToTable("Emits");
                 });
@@ -180,7 +166,17 @@ namespace LeitorNFe.infra.Migrations
                     b.Property<string>("ID")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("DestID")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmitID")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ID");
+
+                    b.HasIndex("DestID");
+
+                    b.HasIndex("EmitID");
 
                     b.ToTable("InfNFe");
                 });
@@ -280,10 +276,6 @@ namespace LeitorNFe.infra.Migrations
                         .WithMany()
                         .HasForeignKey("AddressID");
 
-                    b.HasOne("LeitorNFe.Domain.Domain.InfNFe", null)
-                        .WithOne("Dest")
-                        .HasForeignKey("LeitorNFe.Domain.Domain.Dest", "infNFeID");
-
                     b.Navigation("DestAddress");
                 });
 
@@ -293,10 +285,6 @@ namespace LeitorNFe.infra.Migrations
                         .WithMany()
                         .HasForeignKey("AddressID");
 
-                    b.HasOne("LeitorNFe.Domain.Domain.InfNFe", null)
-                        .WithOne("Emit")
-                        .HasForeignKey("LeitorNFe.Domain.Domain.Emit", "infNFeID");
-
                     b.Navigation("EmitentAddress");
                 });
 
@@ -305,6 +293,21 @@ namespace LeitorNFe.infra.Migrations
                     b.HasOne("LeitorNFe.Domain.Domain.InfNFe", null)
                         .WithOne("ICMSTot")
                         .HasForeignKey("LeitorNFe.Domain.Domain.ICMSTot", "infNFeID");
+                });
+
+            modelBuilder.Entity("LeitorNFe.Domain.Domain.InfNFe", b =>
+                {
+                    b.HasOne("LeitorNFe.Domain.Domain.Dest", "Dest")
+                        .WithMany()
+                        .HasForeignKey("DestID");
+
+                    b.HasOne("LeitorNFe.Domain.Domain.Emit", "Emit")
+                        .WithMany()
+                        .HasForeignKey("EmitID");
+
+                    b.Navigation("Dest");
+
+                    b.Navigation("Emit");
                 });
 
             modelBuilder.Entity("LeitorNFe.Domain.Domain.InfProt", b =>
@@ -323,10 +326,6 @@ namespace LeitorNFe.infra.Migrations
 
             modelBuilder.Entity("LeitorNFe.Domain.Domain.InfNFe", b =>
                 {
-                    b.Navigation("Dest");
-
-                    b.Navigation("Emit");
-
                     b.Navigation("ICMSTot");
 
                     b.Navigation("InfProt");

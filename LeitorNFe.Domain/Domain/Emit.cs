@@ -14,7 +14,7 @@ namespace LeitorNFe.Domain.Domain
         public string xFant { get; set; }
 
         public string Email { get; set; }
-        public string infNFeID { get; set; }
+        //public string infNFeID { get; set; }
         public string AddressID { get; set; } 
         public Address EmitentAddress { get; set; }
     }

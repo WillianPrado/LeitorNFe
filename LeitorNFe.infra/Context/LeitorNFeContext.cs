@@ -11,7 +11,7 @@ namespace LeitorNFe.Infra.Context
         public LeitorNFeContext(DbContextOptions<LeitorNFeContext> options) : base(options)
         {
         }
-        public DbSet<Address> addresses { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         public DbSet<Emit> Emits { get; set; }
         public DbSet<Prod> Prods { get; set; }
         public DbSet<Dest> Dests { get; set; }

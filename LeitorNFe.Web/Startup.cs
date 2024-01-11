@@ -1,4 +1,6 @@
+using LeitorNFe.Domain.Interfaces;
 using LeitorNFe.Infra.Context;
+using LeitorNFe.Infra.Repository;
 using LeitorNFe.Infra.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,6 +34,7 @@ namespace LeitorNFe.Web
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<LeitorNFeContext>(options =>
                     options.UseSqlServer(connectionString));
+            services.AddScoped<IInfNFeRepository, InfNFeRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
