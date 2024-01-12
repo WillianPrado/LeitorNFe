@@ -10,7 +10,7 @@ namespace LeitorNFe.Domain.Domain
     public class ICMSTot
     {
         public int ID { get; set; }
-        public string infNFeID { get; set; }
+        public int infNFeID { get; set; }
         [Column(TypeName = "decimal(18, 10)")]
         public decimal vNF {  get; set; }
     }

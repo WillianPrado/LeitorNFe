@@ -46,7 +46,7 @@ namespace LeitorNFe.Domain.Domain
         /// <summary>
         /// Chave estrangeira da nota fiscal
         /// </summary>
-        public string infNFeID { get; set; }
+        public int infNFeID { get; set; }
         
     }
 }

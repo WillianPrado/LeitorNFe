@@ -12,6 +12,6 @@ namespace LeitorNFe.Domain.Domain
         public long nNF { get; set; }
         public DateTime dhEmi { get; set; }
         public DateTime dhSaiEnt { get; set; }
-        public string InfNFeID { get; set; }
+        public int InfNFeID { get; set; }
     }
 }

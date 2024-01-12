@@ -56,7 +56,7 @@ namespace LeitorNFe.Web.Controllers
 
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetByID([FromQuery] string ID)
+        public async Task<IActionResult> GetByID([FromQuery] int ID)
         {
             try
             {

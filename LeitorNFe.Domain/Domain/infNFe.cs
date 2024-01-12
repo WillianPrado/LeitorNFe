@@ -12,9 +12,13 @@ namespace LeitorNFe.Domain.Domain
     public class InfNFe
     {
         public InfNFe() { }
-        public string ID { get; set; }
+        public int ID { get; set; }
+        public string IDNFe { get; set; }
         public string EmitID { get; set; }
         public string DestID { get; set; }
+        public bool Active { get; set; } = true;
+        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime UpdateDate { get; set; } = DateTime.Now;
         public Ide Ide { get; set; }
         public Emit Emit { get; set; }
         public Dest Dest { get; set; }
@@ -38,7 +42,7 @@ namespace LeitorNFe.Domain.Domain
                     XMLDoc = XDocument.Parse(xmlContent);
 
                     infNFe = "http://www.portalfiscal.inf.br/nfe";
-                    ID = XMLDoc.Descendants(infNFe + "infNFe").FirstOrDefault()?.Attribute("Id")?.Value;
+                    IDNFe = XMLDoc.Descendants(infNFe + "infNFe").FirstOrDefault()?.Attribute("Id")?.Value;
                          ParseEmitente()
                         .ParseIde()
                         .ParseDest()

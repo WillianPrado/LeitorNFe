@@ -21,7 +21,7 @@ namespace LeitorNFe.Infra.Repository
 
         public InfNFe Save(InfNFe infNFe)
         {
-            if (InfNFeExists(infNFe.ID))
+            if (InfNFeExists(infNFe.IDNFe))
                 throw new Exception("Já existe uma InfNFe com o mesmo ID.");
 
             var infNFeSaved = SaveInfNFe(infNFe);
@@ -29,7 +29,7 @@ namespace LeitorNFe.Infra.Repository
         }
         private bool InfNFeExists(string id)
         {
-            return _leitorNFeContext.InfNFe.Any(e => e.ID == id);
+            return _leitorNFeContext.InfNFe.Any(e => e.IDNFe == id && e.Active == true);
         }
         private InfNFe SaveInfNFe(InfNFe infNFe)
         {
@@ -100,7 +100,7 @@ namespace LeitorNFe.Infra.Repository
         {
             return _leitorNFeContext.Addresses.Any(a => a.ID == addressId);
         }
-        public InfNFe GetById(string id)
+        public InfNFe GetById(int id)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace LeitorNFe.Infra.Repository
                     .Include(x => x.ICMSTot)
                     .Include(x => x.InfProt)
                     .Include(x => x.Products)
-                    .FirstOrDefault(x => x.ID == id);
+                    .FirstOrDefault(x => x.ID == id && x.Active == true);
                 return InfNFe;
             }
             catch (Exception ex)
@@ -127,8 +127,8 @@ namespace LeitorNFe.Infra.Repository
             {
                 var totalCount = _leitorNFeContext.InfNFe.Count();
 
-                var infNFeList = _leitorNFeContext.InfNFe
-                    .OrderBy(x => x.ID)
+                var infNFeList = _leitorNFeContext.InfNFe.Where(x => x.Active == true)
+                    .OrderBy(x => x.IDNFe )
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -139,6 +139,25 @@ namespace LeitorNFe.Infra.Repository
             {
                 throw new Exception("Erro ao capturar lista paginada de InfNFe");
             }
+        }
+
+        public string Delete(int id) 
+        {
+            try
+            {
+                var infNFe = _leitorNFeContext.InfNFe.FirstOrDefault(x => x.ID == id);
+                if (infNFe != null)
+                {
+                    infNFe.Active = false;
+                    _leitorNFeContext.SaveChanges();
+                }
+                else
+                    throw new Exception("infNFe não encontrada");
+            }catch (Exception ex)
+            {
+                throw new Exception("Erro ao deletar");
+            }
+            return "infNFe deletada com sucesso!";
         }
     }
 }

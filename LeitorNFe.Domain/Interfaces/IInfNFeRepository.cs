@@ -10,7 +10,8 @@ namespace LeitorNFe.Domain.Interfaces
     public interface IInfNFeRepository
     {
         InfNFe Save(InfNFe infNFe);
-        InfNFe GetById(string id);
+        InfNFe GetById(int id);
         (List<InfNFe> InfNFeList, int TotalCount) GetList(int page = 1, int pageSize = 10);
+        string Delete(int id);
     }
 }

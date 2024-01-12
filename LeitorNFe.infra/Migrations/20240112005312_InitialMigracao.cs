@@ -12,7 +12,7 @@ namespace LeitorNFe.Infra.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "addresses",
+                name: "Addresses",
                 columns: table => new
                 {
                     ID = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -30,23 +30,7 @@ namespace LeitorNFe.Infra.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_addresses", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Ides",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    nNF = table.Column<long>(type: "bigint", nullable: false),
-                    dhEmi = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    dhSaiEnt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    InfNFeID = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ides", x => x.ID);
+                    table.PrimaryKey("PK_Addresses", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,9 +47,9 @@ namespace LeitorNFe.Infra.Migrations
                 {
                     table.PrimaryKey("PK_Dests", x => x.CPF);
                     table.ForeignKey(
-                        name: "FK_Dests_addresses_AddressID",
+                        name: "FK_Dests_Addresses_AddressID",
                         column: x => x.AddressID,
-                        principalTable: "addresses",
+                        principalTable: "Addresses",
                         principalColumn: "ID");
                 });
 
@@ -83,9 +67,9 @@ namespace LeitorNFe.Infra.Migrations
                 {
                     table.PrimaryKey("PK_Emits", x => x.CNPJ);
                     table.ForeignKey(
-                        name: "FK_Emits_addresses_AddressID",
+                        name: "FK_Emits_Addresses_AddressID",
                         column: x => x.AddressID,
-                        principalTable: "addresses",
+                        principalTable: "Addresses",
                         principalColumn: "ID");
                 });
 
@@ -93,9 +77,14 @@ namespace LeitorNFe.Infra.Migrations
                 name: "InfNFe",
                 columns: table => new
                 {
-                    ID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IDNFe = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmitID = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    DestID = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    DestID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -118,7 +107,7 @@ namespace LeitorNFe.Infra.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    infNFeID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    infNFeID = table.Column<int>(type: "int", nullable: false),
                     vNF = table.Column<decimal>(type: "decimal(18,10)", nullable: false)
                 },
                 constraints: table =>
@@ -128,7 +117,30 @@ namespace LeitorNFe.Infra.Migrations
                         name: "FK_iCMSTots_InfNFe_infNFeID",
                         column: x => x.infNFeID,
                         principalTable: "InfNFe",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Ides",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    nNF = table.Column<long>(type: "bigint", nullable: false),
+                    dhEmi = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    dhSaiEnt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    InfNFeID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ides", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Ides_InfNFe_InfNFeID",
+                        column: x => x.InfNFeID,
+                        principalTable: "InfNFe",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -137,7 +149,7 @@ namespace LeitorNFe.Infra.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    infNFeID = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    infNFeID = table.Column<int>(type: "int", nullable: false),
                     chNFe = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -147,7 +159,8 @@ namespace LeitorNFe.Infra.Migrations
                         name: "FK_InfProt_InfNFe_infNFeID",
                         column: x => x.infNFeID,
                         principalTable: "InfNFe",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -172,7 +185,7 @@ namespace LeitorNFe.Infra.Migrations
                     vUnTrib = table.Column<decimal>(type: "decimal(18,10)", nullable: false),
                     vDesc = table.Column<decimal>(type: "decimal(18,10)", nullable: false),
                     indTot = table.Column<int>(type: "int", nullable: false),
-                    infNFeID = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    infNFeID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -181,7 +194,8 @@ namespace LeitorNFe.Infra.Migrations
                         name: "FK_Prods_InfNFe_infNFeID",
                         column: x => x.infNFeID,
                         principalTable: "InfNFe",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -198,8 +212,13 @@ namespace LeitorNFe.Infra.Migrations
                 name: "IX_iCMSTots_infNFeID",
                 table: "iCMSTots",
                 column: "infNFeID",
-                unique: true,
-                filter: "[infNFeID] IS NOT NULL");
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Ides_InfNFeID",
+                table: "Ides",
+                column: "InfNFeID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_InfNFe_DestID",
@@ -215,8 +234,7 @@ namespace LeitorNFe.Infra.Migrations
                 name: "IX_InfProt_infNFeID",
                 table: "InfProt",
                 column: "infNFeID",
-                unique: true,
-                filter: "[infNFeID] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Prods_infNFeID",
@@ -249,7 +267,7 @@ namespace LeitorNFe.Infra.Migrations
                 name: "Emits");
 
             migrationBuilder.DropTable(
-                name: "addresses");
+                name: "Addresses");
         }
     }
 }

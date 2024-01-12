@@ -8,7 +8,9 @@
 
 @inject IInfNFeRepository _iInfNFeRepository;
 
-<h1>Upload XML</h1>
+<h1>Salvar NFe</h1>
+<div class="alert alert-success" style="display: @successMessage">@message</div>
+<div class="alert alert-danger" style="display: @errorMessage">@message</div>
 <form method="post" enctype="multipart/form-data" @onsubmit="HandleSubmit">
     <div class="form-group">
         <label for="file">Selecione um arquivo NFe:</label>
@@ -157,18 +159,25 @@
 @code {
     private IBrowserFile file;
     private InfNFe InfNFe;
+    private string successMessage = "none";
+    private string errorMessage = "none";
+    private string message = "";
 
     private async Task HandleSubmit()
     {
         if (file == null || file.Size == 0)
         {
-            // Handle error
+            message = "Selecione um arquiv";
+            successMessage = "none";
+            errorMessage = "block";
             return;
         }
 
         if (!file.Name.EndsWith(".xml"))
         {
-            // Handle error
+            message = "Deve ser um arquivo xml";
+            successMessage = "none";
+            errorMessage = "block";
             return;
         }
 
@@ -184,20 +193,26 @@
         }
         catch (Exception ex)
         {
-            // Handle error
+            message = ex.Message;
+            successMessage = "none";
+            errorMessage = "block";
         }
     }
     private async Task SaveToOtherClass()
     {
         if (file == null || file.Size == 0)
         {
-            // Handle error
+            message = "Selecione um arquiv";
+            successMessage = "none";
+            errorMessage = "block";
             return;
         }
 
         if (!file.Name.EndsWith(".xml"))
         {
-            // Handle error
+            message = "Deve ser um arquivo xml";
+            successMessage = "none";
+            errorMessage = "block";
             return;
         }
 
@@ -208,12 +223,17 @@
                 await file.OpenReadStream().CopyToAsync(memoryStream);
                 memoryStream.Seek(0, SeekOrigin.Begin);
                 InfNFe = new InfNFe(memoryStream);
-                //InfNFe = _iInfNFeRepository.Save(InfNFe);
+                InfNFe = _iInfNFeRepository.Save(InfNFe);
+                successMessage = "block";
+                errorMessage = "none";
+                message = $"NFe: {InfNFe.IDNFe} salva com sucesso!";
             }
         }
         catch (Exception ex)
         {
-            // Handle error
+            message = ex.Message;
+            successMessage = "none";
+            errorMessage = "block";
         }
     }
     private void HandleFileChange(InputFileChangeEventArgs e)

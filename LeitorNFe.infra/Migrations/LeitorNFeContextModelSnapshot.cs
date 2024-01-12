@@ -62,7 +62,7 @@ namespace LeitorNFe.Infra.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("addresses");
+                    b.ToTable("Addresses");
                 });
 
             modelBuilder.Entity("LeitorNFe.Domain.Domain.Dest", b =>
@@ -121,8 +121,8 @@ namespace LeitorNFe.Infra.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("infNFeID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("infNFeID")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("vNF")
                         .HasColumnType("decimal(18, 10)");
@@ -130,8 +130,7 @@ namespace LeitorNFe.Infra.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("infNFeID")
-                        .IsUnique()
-                        .HasFilter("[infNFeID] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("iCMSTots");
                 });
@@ -144,8 +143,8 @@ namespace LeitorNFe.Infra.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
 
-                    b.Property<string>("InfNFeID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("InfNFeID")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("dhEmi")
                         .HasColumnType("datetime2");
@@ -158,19 +157,37 @@ namespace LeitorNFe.Infra.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("InfNFeID")
+                        .IsUnique();
+
                     b.ToTable("Ides");
                 });
 
             modelBuilder.Entity("LeitorNFe.Domain.Domain.InfNFe", b =>
                 {
-                    b.Property<string>("ID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("DestID")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("EmitID")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IDNFe")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ID");
 
@@ -192,14 +209,13 @@ namespace LeitorNFe.Infra.Migrations
                     b.Property<string>("chNFe")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("infNFeID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("infNFeID")
+                        .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("infNFeID")
-                        .IsUnique()
-                        .HasFilter("[infNFeID] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("InfProt");
                 });
@@ -233,8 +249,8 @@ namespace LeitorNFe.Infra.Migrations
                     b.Property<int>("indTot")
                         .HasColumnType("int");
 
-                    b.Property<string>("infNFeID")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("infNFeID")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("qCom")
                         .HasColumnType("decimal(18, 10)");
@@ -292,7 +308,18 @@ namespace LeitorNFe.Infra.Migrations
                 {
                     b.HasOne("LeitorNFe.Domain.Domain.InfNFe", null)
                         .WithOne("ICMSTot")
-                        .HasForeignKey("LeitorNFe.Domain.Domain.ICMSTot", "infNFeID");
+                        .HasForeignKey("LeitorNFe.Domain.Domain.ICMSTot", "infNFeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LeitorNFe.Domain.Domain.Ide", b =>
+                {
+                    b.HasOne("LeitorNFe.Domain.Domain.InfNFe", null)
+                        .WithOne("Ide")
+                        .HasForeignKey("LeitorNFe.Domain.Domain.Ide", "InfNFeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LeitorNFe.Domain.Domain.InfNFe", b =>
@@ -314,19 +341,25 @@ namespace LeitorNFe.Infra.Migrations
                 {
                     b.HasOne("LeitorNFe.Domain.Domain.InfNFe", null)
                         .WithOne("InfProt")
-                        .HasForeignKey("LeitorNFe.Domain.Domain.InfProt", "infNFeID");
+                        .HasForeignKey("LeitorNFe.Domain.Domain.InfProt", "infNFeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LeitorNFe.Domain.Domain.Prod", b =>
                 {
                     b.HasOne("LeitorNFe.Domain.Domain.InfNFe", null)
                         .WithMany("Products")
-                        .HasForeignKey("infNFeID");
+                        .HasForeignKey("infNFeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LeitorNFe.Domain.Domain.InfNFe", b =>
                 {
                     b.Navigation("ICMSTot");
+
+                    b.Navigation("Ide");
 
                     b.Navigation("InfProt");
 

@@ -6,20 +6,30 @@
 @using System.IO
 
 @inject IInfNFeRepository _iInfNFeRepository;
+@inject NavigationManager NavigationManager
+
 
 <h1>Lista de NFe's</h1>
+<div class="alert alert-success" style="display: @successMessage">message</div>
+<div class="alert alert-danger" style="display: @errorMessage">message</div>
+
 <div class="table-responsive mt-3">
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>ID NFe</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var produto in InfNFeList)
+            @foreach (var infNFe in InfNFeList)
             {
                 <tr>
-                    <td>@produto.ID</td>
+                    <td>@infNFe.IDNFe</td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="() => DeleteInfNFe(infNFe.ID)">Excluir</button>
+                        <button class="btn btn-primary" @onclick="() => EditInfNFe(infNFe.ID)">Editar</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -34,6 +44,9 @@
     private int page = 1;
     private int pageSize = 10;
     private int totalCount = 0;
+    private string successMessage = "none";
+    private string errorMessage = "none";
+    private string message = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,9 +60,30 @@
         totalCount = response.TotalCount;
     }
 
-    private async Task HandlePageChange(int newPage)
+    public async Task DeleteInfNFe(int id)
     {
-        page = newPage;
-        await LoadData();
+        try
+        {
+            message = _iInfNFeRepository.Delete(id);
+            // Recarregar os dados após a exclusão
+            await LoadData();
+            // Exibir mensagem de sucesso
+            successMessage = "block";
+            errorMessage = "none";
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+            // Lidar com exceções, se necessário
+            // Exibir mensagem de erro
+            successMessage = "none";
+            errorMessage = "block";
+        }
+    }
+
+    public void EditInfNFe(int id)
+    {
+        var editUrl = $"edit/{id}";
+        NavigationManager.NavigateTo(editUrl, true);
     }
 }
