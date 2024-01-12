@@ -1,5 +1,5 @@
 # Projeto de Leitura e Salvamento de NFes
-### Ao iniciar a aplicação, uma função automática criará as tabelas necessárias no banco de dados SQL Server.
+### Ao iniciar a aplicação, uma função automáticamente criará as tabelas necessárias no banco de dados SQL Server.
 Este projeto é uma aplicação desenvolvida utilizando a arquitetura DDD (Domain-Driven Design) e as tecnologias ASP.NET Core no backend, SQL Server como banco de dados e Razor no frontend. O objetivo principal é a leitura e o armazenamento de dados de Notas Fiscais Eletrônicas (NFes).
 ![image](https://github.com/WillianPrado/LeitorNFe/assets/65555067/5363ab3e-8445-4e06-8e28-a2636e6beddc)
 
